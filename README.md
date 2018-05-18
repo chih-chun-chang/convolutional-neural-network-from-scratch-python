@@ -17,9 +17,10 @@ This example is only based on the python library ```numpy``` to implement convol
 In the ```main.py```, you can modify the learning rate, epoch and batch size to train the CNN from scratch and evaluate the result. Besides, there is a provided pretrained weight file ```pretrained_weights.pkl```.
 
 ```python app.py```
+
 This is the demo to predict handwritten digits based on the python api ```flask``` to build a localhost website.
 
-<img src="img/demo.gif" width="70%"/>
+![Alt Text](img/demo.gif)
 
 ## Results
 
