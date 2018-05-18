@@ -1,0 +1,99 @@
+<!DOCTYPE HTML5>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <title>Digit Recognition</title>  
+        <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/style.min.css') }}">
+        <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/drawingboard.min.css') }}">
+    </head>
+    <body>
+        <section>
+            <div class="container">
+                <br><br>
+                <h3>Digit Recognition Using CNN</h3>
+                <h6>Demo: </h6>
+                <h6>1. Draw a digit on the right board</h6>
+                <h6>2. Click the Predict button</h6>
+                <h6>3. Results will be showed</h6>
+                <h6>(You can repeat these steps with the clear button)</h6>
+                <br>
+                <div style="float: left ;">
+                    <div class="board" id="default-board"></div>
+                    <button id="button" class="waves-effect waves-light btn" style="width: 202px; margin-left: 1%;" onclick=digit_prediction()>Predict</button>
+                </div>
+                <div class="row center-align">
+                
+                 </div>
+                <div class="result" style="color:#a3a3a3;"><span id="result">Prediction will be displayed here</span></div>
+            </div>
+        </section>
+        <script src="https://code.jquery.com/jquery-3.2.1.min.js"></script> 
+        <script src="{{ url_for('static', filename='js/drawingBoard.min.js') }}"></script>
+        <script src="{{ url_for('static', filename='js/hermiteResize.js') }}"></script>
+        <script>
+            var board = new DrawingBoard.Board('default-board', {
+                controls: [
+                    { DrawingMode: {pencil:false, eraser:false, filler: false } },
+                    { Navigation: {back: false, forward:false} }
+                ],
+                size: 8,
+                enlargeYourContainer: true
+            });
+
+            function digit_prediction(){
+                var resizedCanvas = document.createElement('canvas');
+                resample_single(board.canvas, 28, 28, true, resizedCanvas);
+                var ctx = resizedCanvas.getContext("2d");
+                var imgData= ctx.getImageData(0, 0, ctx.canvas.width, ctx.canvas.height);
+                var data = imgData.data;
+                var grayscale_list =  []
+                for (var i = 0; i < data.length; i += 4) {
+                    var avg = (data[i] + data[i + 1] + data[i + 2]) / 3;
+                    data[i] = avg; // red
+                    data[i + 1] = avg; // green
+                    data[i + 2] = avg; // blue
+                    grayscale_list.push(avg);
+                }
+                //ctx.putImageData(imgData, 0, 0);
+                //var img = ctx.getImageData(0, 0, ctx.canvas.width, ctx.canvas.height).data;
+                /*
+                var canvas = document.createElement("canvas");
+                var ctx = canvas.getContext("2d");
+                canvas.width = 40;
+                canvas.height = 40;
+                var imgData = ctx.getImageData(0, 0, 40, 40);
+                var data = imgData.data;
+                for (var i = 0; i < data.length; i += 4) {
+                    data[i] = 255; // set every red pixel element to 255
+                    data[i + 3] = 255; // make this pixel opaque
+                }
+                ctx.putImageData(imgData, 0, 0);
+                var image = new Image();
+                var image2 = new Image();
+                image.src = canvas.toDataURL();
+                image2.src = canvas.toDataURL();
+                $('#conv_img').html("<img src="+image.src+">"+"<img src="+image2.src+">")
+                */
+
+
+                $(function () {
+                    $('#result').html("Predicting . . .");
+                    console.log("Function is successfully called")
+                    $.ajax({
+                        url: '/digit_prediction',
+                        data: JSON.stringify(grayscale_list),
+                        contentType: "application/json; charset=utf-8",
+                        type: 'POST',
+                        success: function (response) {
+                            console.log(response);
+                            $('#result').html("Prediction : <span class='digit'>"+response['digit']+"</span></br> Probability : "+response['probability']);
+                        },
+                        error: function (error) {
+                            console.log(error);
+                        }
+                    });
+                });
+            } 
+        </script>
+    </body>
+</html>
