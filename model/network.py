@@ -2,7 +2,7 @@ import numpy as np
 import pickle 
 import sys
 from time import *
-from loss import *
+from model.loss import *
 from model.layers import *
 
 class Net:
@@ -75,8 +75,7 @@ class Net:
                 loss /= batch_size
                 batch_acc = float(acc)/float(batch_size)
                 training_acc = float(total_acc)/float((batch_index+batch_size)*(e+1))
-                print('=== Epoch: {:d}/{:d} === Iter:{:d} === Loss: {:.2f} === BAcc: {:.2f} === TAcc: {:.2f} === Remain: {:d} Hrs {:d} Mins {:d} Secs ===').format(e,
-                    epoch,batch_index+batch_size,loss,batch_acc,training_acc,hrs,mins,secs)
+                print('=== Epoch: {0:d}/{1:d} === Iter:{2:d} === Loss: {3:.2f} === BAcc: {4:.2f} === TAcc: {5:.2f} === Remain: {6:d} Hrs {7:d} Mins {8:d} Secs ==='.format(e,epoch,batch_index+batch_size,loss,batch_acc,training_acc,int(hrs),int(mins),int(secs)))
         # dump weights and bias
         obj = []
         for i in range(self.lay_num):
@@ -110,7 +109,7 @@ class Net:
             if np.argmax(output) == np.argmax(y):
                 total_acc += 1
         sys.stdout.write("\n")
-        print('=== Test Size:{:d} === Test Acc:{:.2f} ===').format(test_size, float(total_acc)/float(test_size))
+        print('=== Test Size:{0:d} === Test Acc:{1:.2f} ==='.format(test_size, float(total_acc)/float(test_size)))
 
 
     def test_with_pretrained_weights(self, data, label, test_size, weights_file):
@@ -144,7 +143,7 @@ class Net:
             if np.argmax(output) == np.argmax(y):
                 total_acc += 1
         sys.stdout.write("\n")
-        print('=== Test Size:{:d} === Test Acc:{:.2f} ===').format(test_size, float(total_acc)/float(test_size))
+        print('=== Test Size:{0:d} === Test Acc:{1:.2f} ==='.format(test_size, float(total_acc)/float(test_size)))
         
     def predict_with_pretrained_weights(self, inputs, weights_file):
         with open(weights_file, 'rb') as handle:
