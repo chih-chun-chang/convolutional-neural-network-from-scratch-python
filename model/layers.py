@@ -40,8 +40,8 @@ class Convolution2D:
         HH = (H - self.K)/self.s + 1
         feature_maps = np.zeros((self.F, WW, HH))
         for f in range(self.F):
-            for w in range(WW):
-                for h in range(HH):
+            for w in range(0, WW, self.s):
+                for h in range(0, HH, self.s):
                     feature_maps[f,w,h]=np.sum(self.inputs[:,w:w+self.K,h:h+self.K]*self.weights[f,:,:,:])+self.bias[f]
 
         return feature_maps
@@ -55,8 +55,8 @@ class Convolution2D:
 
         F, W, H = dy.shape
         for f in range(F):
-            for w in range(W):
-                for h in range(H):
+            for w in range(0, W, self.s):
+                for h in range(0, H, self.s):
                     dw[f,:,:,:]+=dy[f,w,h]*self.inputs[:,w:w+self.K,h:h+self.K]
                     dx[:,w:w+self.K,h:h+self.K]+=dy[f,w,h]*self.weights[f,:,:,:]
 
